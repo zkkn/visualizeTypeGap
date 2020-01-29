@@ -14,20 +14,11 @@
 </head>
 <body>
   <div id="app">
-    <!-- <p v-model='prev_enter_time'>{{ prev_enter_time }}</p> -->
-    <!-- <p v-model='enter_time_diff'>{{ enter_time_diff }}</p> -->
-    <!-- <p v-model='word_list'>{{ word_list }}</p> -->
-    <!-- <p v-model='prev_word'>{{ prev_word }}</p> -->
-    <!-- <input type="text" @keydown.enter="trigger"　v-model="sample_v_model" placeholder="Enter text here"><br> -->
-    <!-- <p>{{ sample_v_model }}</p> -->
-
     <textarea v-model="sample_v_model"  @keydown.enter="pressEnterKey" placeholder="ここに文字を打ってください。日本語だけ受付可能！改行不可！文字を消すのも不可！"></textarea>
     <br>
-    <!-- <p style="white-space: pre-line;">{{ sample_v_model }}</p> -->
     <p id="outputWord" style="white-space: pre-line;"  v-bind:style="{'font-size': active_font_size + 'px' }">{{prev_word}}</p>
 
 
- 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/locale/ja.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/vue"></script>
@@ -39,7 +30,6 @@
         data: {
             sample_v_model:'',
             word_list:[{word: this.sample_v_model}],
-            // word_list:[],
             prev_word:null,
             enter_time_diff:null,
             prev_enter_time:null,
