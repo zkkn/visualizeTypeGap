@@ -1,0 +1,102 @@
+
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <title>Fontsize emotion</title>
+<style>
+  textarea {
+      width:50%;
+      height:30%;
+    }
+  </style>
+  <link rel="stylesheet" href="./style.scss" />
+</head>
+<body>
+  <div id="app">
+    <!-- <p v-model='prev_enter_time'>{{ prev_enter_time }}</p> -->
+    <!-- <p v-model='enter_time_diff'>{{ enter_time_diff }}</p> -->
+    <!-- <p v-model='word_list'>{{ word_list }}</p> -->
+    <!-- <p v-model='prev_word'>{{ prev_word }}</p> -->
+    <!-- <input type="text" @keydown.enter="trigger"　v-model="sample_v_model" placeholder="Enter text here"><br> -->
+    <!-- <p>{{ sample_v_model }}</p> -->
+
+    <textarea v-model="sample_v_model"  @keydown.enter="pressEnterKey" placeholder="ここに文字を打ってください。日本語だけ受付可能！改行不可！文字を消すのも不可！"></textarea>
+    <br>
+    <!-- <p style="white-space: pre-line;">{{ sample_v_model }}</p> -->
+    <p id="outputWord" style="white-space: pre-line;"  v-bind:style="{'font-size': active_font_size + 'px' }">{{prev_word}}</p>
+
+
+ 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/locale/ja.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vue"></script>
+
+  <script>
+    //  TODO: return前の単語を保存
+    new Vue({
+      el: '#app',
+        data: {
+            sample_v_model:'',
+            word_list:[{word: this.sample_v_model}],
+            // word_list:[],
+            prev_word:null,
+            enter_time_diff:null,
+            prev_enter_time:null,
+            active_font_size:10,
+            enter_time_diff_list:[],
+        },
+        methods: {
+            pressEnterKey(event) {
+                // 初期値を入れたい
+                // 日本語入力中のEnterキー操作
+                var length = this.word_list.length;
+                    if(length == 1) {
+                        console.log(this.prev_word);
+                        this.prev_word = this.word_list[length - 1].word;
+                    }
+                    if (length > 1) {
+                        console.log(this.prev_word);
+                        this.prev_word = this.word_list[length - 1].word.split(this.word_list[length - 2].word).join("")
+                        this.word_list.splice(1,1,{word:this.prev_word})
+                    }
+                if (event.isComposing){
+                    // 初回
+                    this.word_list.push({ word: this.sample_v_model });
+                    if(this.prev_enter_time == null){
+                        this.prev_enter_time = moment();
+                    }
+                    else {
+                        this.enter_time_diff_list.push({time:moment().diff(this.prev_enter_time, "second")});
+                        // this.enter_time_diff = moment().diff(this.prev_enter_time, "second");
+                        // FIXME: ここを2つ前じゃなくリアルタイムにする
+                        this.enter_time_diff = this.enter_time_diff_list[this.enter_time_diff_list.length - 3].time;
+                        if(this.enter_time_diff < 1) {
+                            this.active_font_size = 10;
+                        }
+                        if(1 <= this.enter_time_diff < 3) {
+                            this.active_font_size = 80;
+                        }
+                        if(3 <= this.enter_time_diff) {
+                            this.active_font_size = 200;
+                        }
+                        this.prev_enter_time = moment();
+                    }
+                }
+            },
+        },
+        computed: {
+            diff_word_list: function () {
+                if (this.word_list.length) {
+                    this.word_list.forEach((value, index, array) => {
+                        // console.log(value.word.split(array[index - 1]).join(""));
+                        return value.word.split(array[index - 1].word).join("");
+                    });
+                }
+            }
+        }
+    })
+  </script>
+
+</body>
+</html>
